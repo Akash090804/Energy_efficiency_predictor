@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy Load Prediction</title>
+    <link rel="stylesheet" href="{{ request.url_for('static', path='style.css') }}">
+    <style>
+        .error-message {
+            color: #e53e3e;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        input[type="number"]:invalid,
+        input.error {
+            border-color: #e53e3e;
+        }
+
+        .required {
+            color: #e53e3e;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <img src="https://static.vecteezy.com/system/resources/thumbnails/029/916/446/small/green-energy-efficiency-logo-chart-concept-green-energy-background-vector.jpg"
+             alt="Energy Efficiency Logo" class="logo">
+        <h1>Energy Efficiency Predictor</h1>
+    </header>
+    
+    <form method="post" action="/predict" id="predictionForm">
+        <div>
+            <label for="X1">Relative Compactness (X1) <span class="required">*</span></label>
+            <input type="number" name="X1" id="X1" step="0.01" min="0" required 
+                   placeholder="Must be greater than 0">
+            <span class="error-message" id="error-X1">⚠️ Must be greater than 0</span>
+        </div>
+
+        <div>
+            <label for="X2">Surface Area (X2) <span class="required">*</span></label>
+            <input type="number" name="X2" id="X2" step="0.01" min="0" required 
+                   placeholder="Must be greater than 0">
+            <span class="error-message" id="error-X2">⚠️ Must be greater than 0</span>
+        </div>
+
+        <div>
+            <label for="X3">Wall Area (X3) <span class="required">*</span></label>
+            <input type="number" name="X3" id="X3" step="0.01" min="0" required 
+                   placeholder="Must be greater than 0">
+            <span class="error-message" id="error-X3">⚠️ Must be greater than 0</span>
+        </div>
+
+        <div>
+            <label for="X4">Roof Area (X4) <span class="required">*</span></label>
+            <input type="number" name="X4" id="X4" step="0.01" min="0" required 
+                   placeholder="Must be greater than 0">
+            <span class="error-message" id="error-X4">⚠️ Must be greater than 0</span>
+        </div>
+
+        <div>
+            <label for="X5">Overall Height (X5) <span class="required">*</span></label>
+            <input type="number" name="X5" id="X5" step="0.01" min="0" required 
+                   placeholder="Must be greater than 0">
+            <span class="error-message" id="error-X5">⚠️ Must be greater than 0</span>
+        </div>
+
+        <div>
+            <label for="X6">Orientation (X6) <span class="required">*</span></label>
+            <select name="X6" id="X6" required>
+                <option value="">-- Select Orientation --</option>
+                <option value="2">North</option>
+                <option value="3">East</option>
+                <option value="4">South</option>
+                <option value="5">West</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="X7">Glazing Area (X7) <span class="required">*</span></label>
+            <input type="number" name="X7" id="X7" step="0.01" min="0" required 
+                   placeholder="Must be greater than 0">
+            <span class="error-message" id="error-X7">⚠️ Must be greater than 0</span>
+        </div>
+
+        <div>
+            <label for="X8">Glazing Area Distribution (X8) <span class="required">*</span></label>
+            <select name="X8" id="X8" required>
+                <option value="">-- Select Distribution --</option>
+                <option value="1">Uniform</option>
+                <option value="2">North (55% North)</option>
+                <option value="3">East (55% East)</option>
+                <option value="4">South (55% South)</option>
+                <option value="5">West (55% West)</option>
+            </select>
+        </div>
+
+        <button type="submit">Predict</button>
+    </form>
+
+    <script>
+        // Real-time validation
+        const inputs = ['X1', 'X2', 'X3', 'X4', 'X5', 'X7'];
+        
+        inputs.forEach(inputId => {
+            const input = document.getElementById(inputId);
+            const errorMsg = document.getElementById(`error-${inputId}`);
+            
+            // Show error on input
+            input.addEventListener('input', function() {
+                if (this.value !== '' && parseFloat(this.value) < 0) {
+                    errorMsg.style.display = 'block';
+                    this.classList.add('error');
+                } else {
+                    errorMsg.style.display = 'none';
+                    this.classList.remove('error');
+                }
+            });
+            
+            // Show error on blur
+            input.addEventListener('blur', function() {
+                if (this.value !== '' && parseFloat(this.value) < 0) {
+                    errorMsg.style.display = 'block';
+                    this.classList.add('error');
+                }
+            });
+        });
+
+        // Form submission validation
+        document.getElementById('predictionForm').addEventListener('submit', function(e) {
+            let hasError = false;
+            
+            inputs.forEach(inputId => {
+                const input = document.getElementById(inputId);
+                const errorMsg = document.getElementById(`error-${inputId}`);
+                
+                if (parseFloat(input.value) < 0) {
+                    errorMsg.style.display = 'block';
+                    input.classList.add('error');
+                    hasError = true;
+                }
+            });
+            
+            if (hasError) {
+                e.preventDefault();
+                alert('⚠️ Please fix all errors before submitting!');
+            }
+        });
+    </script>
+</body>
+</html>
