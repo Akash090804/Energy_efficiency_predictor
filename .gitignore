@@ -1,3 +1,2 @@
 envenv/
-Dockerfile
-test.py
+__pycache__
